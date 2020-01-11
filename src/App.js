@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-// import { Button, Card, Row, Col } from 'react-materialize';
 import firebase from 'firebase';
 import PublishProduct  from './PublishProduct'
 import './App.css';
@@ -7,10 +6,8 @@ import './App.css';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
@@ -38,8 +35,7 @@ class App extends Component{
     componentWillMount()
     {
       firebase.auth().onAuthStateChanged(user => {
-        console.log("result", user)
-        this.setState({user :user })
+        this.setState({user:user })
       })
     }
     //Authentication with google 
@@ -72,7 +68,7 @@ class App extends Component{
               {/* <img src={this.state.user.photoURL} alt={this.state.user.displayName} /> */}
               {/* <p>hola</p>{this.state.user.displayName}
               <button onClick={this.handleLogout}>Salir</button> */}
-              <PublishProduct />
+              <PublishProduct/>
           </div>
         );
       }else{

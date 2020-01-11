@@ -12,6 +12,7 @@ html{
 body{
   height:100%; /* force the BODY element to match the height of the HTML element */
   background-color: #EAEAEA;
+  overflow: scroll;
 }
 .accountCircle{
   width: 30px;
@@ -36,7 +37,11 @@ body{
   overflow: hidden;
   z-index: -1;
 }
-
+.MuiListItem-rootProd{
+  align-items: left !important ;
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+}
 
  .title
 {
@@ -60,18 +65,63 @@ body{
   top: 20px;
 }
 .imgSelect{
-  width: 90px;
-  height: 90px;
-  border-radius: 44px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50px;
 }
 .AppBarStore{
   background-color: #E12852 !important ;
 }
 
+.itemPublish{
+  background-color: #FAFAFA;
+  height: 40px;
+  text-align: left;
+  font: Medium 14px/20px Roboto;
+  letter-spacing: 0;
+  opacity: 1;
+}
+
+.itemPublish h5{
+  color: #000000DE;
+  margin: auto;
+  padding: 10px;
+}
+
+.itemPublish h5 span{
+  color: #E12852;
+}
 .hidden{
   display: none;
 }
+.lineCategory{
+  padding: 10px;
+  margin: auto;
+  text-align: left;
+  font-size: 14px;
+  color: #333333;
+}
+.changeCategory{
+  padding: 0px 0px 10px 10px;
+  margin: auto;
+  text-align: left;
+  font-size: 14px;
+  color: #E12852;
+  text-decoration: underline;
+}
+.MuiSelect-select.MuiSelect-select{
+  padding-right: 210px !important;
+  height: 20px !important;
+  border: 0.5px solid #707070 !important;
+  opacity: 1 !important;
 
+}
+.MuiFormControl-root{
+  margin: auto !important ;
+  text-align: left !important;
+  padding: 10px !important;
+  display: block !important;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
