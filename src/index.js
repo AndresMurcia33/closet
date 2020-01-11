@@ -3,6 +3,11 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import fire from './fire'; 
+import firebase from 'firebase';
+
+//Init firebase
+firebase.initializeApp(fire);
 
 ReactDOM.render(<App />, document.getElementById('root'));
 

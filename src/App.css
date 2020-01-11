@@ -1,31 +1,72 @@
-.App {
-  text-align: center;
-}
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
 
-@media (prefers-reduced-motion: no-preference) {
+/* @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
+} */
+html{
+  min-height:100%;/* make sure it is at least as tall as the viewport */
+  position:relative;
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+body{
+  height:100%; /* force the BODY element to match the height of the HTML element */
+  background-color: #EAEAEA;
 }
-
+.accountCircle{
+  width: 30px;
+  height: 30px;
+  border-radius: 14px;
+}
 .App-link {
   color: #61dafb;
+}
+.contaComponent{
+  text-align: center;
+  background-color: white;
+  margin: 14px 14px 14px 14px;
+  position: absolute;
+  top: 56px;
+  bottom: 0px;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  z-index: -1;
+}
+
+
+ .title
+{
+  height: 26px;
+  font-size: 20px;
+  font-family: Roboto;
+  letter-spacing: 0;
+  color: #045A9B;
+  opacity: 1;
+}
+ .subTitle{
+  text-align: left;
+  font-family: Roboto;
+  font-size: 17px;
+  letter-spacing: 0;
+  color: #909090;
+  opacity: 1
+}
+ .listType
+{
+  top: 20px;
+}
+.imgSelect{
+  width: 90px;
+  height: 90px;
+  border-radius: 44px;
+}
+.AppBarStore{
+  background-color: #E12852 !important ;
+}
+
+.hidden{
+  display: none;
 }
 
 @keyframes App-logo-spin {
