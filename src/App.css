@@ -21,6 +21,9 @@ body{
 .App-link {
   color: #61dafb;
 }
+.smallButton{
+  font-size: 0.5rem !important;
+}
 .contaComponent{
   text-align: center;
   background-color: white;

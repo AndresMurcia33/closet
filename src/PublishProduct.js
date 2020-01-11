@@ -12,6 +12,18 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 
+
+import ListSubheader from '@material-ui/core/ListSubheader';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import Collapse from '@material-ui/core/Collapse';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+import DraftsIcon from '@material-ui/icons/Drafts';
+import SendIcon from '@material-ui/icons/Send';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
+import StarBorder from '@material-ui/icons/StarBorder';
+
+
 class PublishProduct extends Component {
   constructor(props) {
     super(props);
@@ -38,10 +50,12 @@ class PublishProduct extends Component {
         }
       },
       selectPublication: null,
-      selectedCategory: false
+      selectedCategory: false,
+      openList: true
     };
     this.onDrop = this.onDrop.bind(this);
-    this.handleItemList = this.handleItemList.bind(this)
+    this.handleItemList = this.handleItemList.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
 
   onDrop(pictureFiles, pictureDataURLs) {
@@ -51,30 +65,75 @@ class PublishProduct extends Component {
     // const storeRef = firebase.storage().ref(`/Fotos/${img.name}`)
     // const task = storeRef.put(img);
   }
-  handleItemList(data) {
-    this.setState({ selectPublication: data, selectedCategory: true })
+  handleClick() {
+    let newState = this.state.openList;
+    this.setState({openList: !newState });
+  };
 
+  handleItemList() {
+    const data = this.state.selectPublication;
     if (data) {
+      console.log("Data", data);
+      console.log("statessss", this.state.selectPublication);
       return (
-        <List className="listTyp2e">
-          <ListItem key={data.id}  >
-            <Grid
-              container
-              direction="column"
-              justify="center"
-              alignItems="center"
+        <Grid
+          container
+          direction="row-reverse"
+          justify="space-between"
+          alignItems="baseline"
+        >
+          <div>
+            <List
+              component="nav"
+              aria-labelledby="nested-list-subheader"
             >
-              <ListItemAvatar >
-                <img className="imgSelect" src={process.env.PUBLIC_URL + data.src} alt={data.alt} />
-              </ListItemAvatar>
-              {/* onClick={() => this.handleItemList(data)} */}
-              <ListItemText primary={data.name} />
-              <Button variant="outlined" color="secondary">
-                Volver
-            </Button>
-            </Grid>
-          </ListItem>
-        </List>
+              <ListItem button onClick={this.handleClick}>
+                <ListItemText primary="Inbox" />
+                {this.state.openList ? <ExpandLess /> : <ExpandMore />}
+              </ListItem>
+              <Collapse in={this.state.openList} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem button >
+                    <ListItemText primary="Starred" />
+                  </ListItem>
+                </List>
+              </Collapse>
+              <ListItem button onClick={this.handleClick}>
+                <ListItemText primary="Inbox" />
+                {this.state.openList ? <ExpandLess /> : <ExpandMore />}
+              </ListItem>
+              <Collapse in={this.state.openList} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem button >
+                    <ListItemText primary="Starred" />
+                  </ListItem>
+                </List>
+              </Collapse>
+            </List>
+          </div>
+          <div>
+            <List className="listTyp2e">
+              <ListItem key={data.id}  >
+                <Grid
+                  container
+                  direction="column"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <ListItemAvatar >
+                    <img className="imgSelect" src={process.env.PUBLIC_URL + data.src} alt={data.alt} />
+                  </ListItemAvatar>
+                  {/* onClick={() => this.handleItemList(data)} */}
+                  <ListItemText primary={data.name} />
+                  <Button className="smallButton" size="small" variant="outlined" color="secondary">
+                    Volver
+              </Button>
+                </Grid>
+              </ListItem>
+            </List>
+          </div>
+        </Grid>
+
       )
     }
 
@@ -87,7 +146,7 @@ class PublishProduct extends Component {
       <div>
         <h2 className="title">
           VENDE TUS PRODUCTOS
-            </h2>
+        </h2>
         <label className="subTitle">Cómo quieres publicar?</label>
         <List className="listType">
           {
@@ -102,7 +161,7 @@ class PublishProduct extends Component {
                       alignItems="center"
                     >
                       <ListItemAvatar >
-                        <img onClick={() => this.handleItemList(objList[human])} className="imgSelect" src={process.env.PUBLIC_URL + objList[human].src} alt={objList[human].alt} />
+                        <img onClick={() => this.setState({ selectPublication: objList[human], selectedCategory: true })} className="imgSelect" src={process.env.PUBLIC_URL + objList[human].src} alt={objList[human].alt} />
                       </ListItemAvatar>
                       <ListItemText primary={objList[human].name} />
                     </Grid>
