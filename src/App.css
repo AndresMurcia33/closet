@@ -8,11 +8,11 @@
 html{
   min-height:100%;/* make sure it is at least as tall as the viewport */
   position:relative;
+
 }
 body{
   height:100%; /* force the BODY element to match the height of the HTML element */
   background-color: #EAEAEA;
-  overflow: scroll;
 }
 .accountCircle{
   width: 30px;
@@ -26,7 +26,6 @@ body{
   font-size: 0.5rem !important;
 }
 .contaComponent{
-  text-align: center;
   background-color: white;
   margin: 14px 14px 14px 14px;
   position: absolute;
@@ -36,6 +35,7 @@ body{
   right: 0;
   overflow: hidden;
   z-index: -1;
+  overflow: scroll;
 }
 .MuiListItem-rootProd{
   align-items: left !important ;
@@ -45,6 +45,7 @@ body{
 
  .title
 {
+  text-align: center;
   height: 26px;
   font-size: 20px;
   font-family: Roboto;
@@ -53,12 +54,13 @@ body{
   opacity: 1;
 }
  .subTitle{
-  text-align: left;
+  text-align: center;
   font-family: Roboto;
   font-size: 17px;
   letter-spacing: 0;
   color: #909090;
-  opacity: 1
+  opacity: 1;
+  margin: 0px;
 }
  .listType
 {
@@ -110,18 +112,40 @@ body{
   text-decoration: underline;
 }
 .MuiSelect-select.MuiSelect-select{
-  padding-right: 210px !important;
-  height: 20px !important;
-  border: 0.5px solid #707070 !important;
-  opacity: 1 !important;
+  min-width: 200px;
+ text-align: left;
+}
 
+.MuiFormControl-root
+{
+  margin: 10px !important;
 }
-.MuiFormControl-root{
-  margin: auto !important ;
-  text-align: left !important;
-  padding: 10px !important;
-  display: block !important;
+
+
+.fileContainer {
+  background: #fff;
+  box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, 0.05);
+  position: relative;
+  border-radius: 10px;
+  padding: 0px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin: 0px auto !important;
+  transition: all 0.3s ease-in;
 }
+.publicButton{
+  top:30px;
+  color: #FFFFFF !important;
+  background-color: #E12852 !important;
+  border-radius: 17px !important;
+  font-size: 14px !important;
+  width: 92% !important;
+  margin-left: 10px !important;
+  margin-bottom: 40px !important; 
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

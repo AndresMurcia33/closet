@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import './App.css';
-import ReactDOM from "react-dom";
 import firebase from 'firebase';
 import ImageUploader from "react-images-upload";
 import { withStyles } from '@material-ui/core/styles';
@@ -11,7 +10,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-// import firebase from 'firebase';
 
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -22,14 +20,13 @@ import Select from '@material-ui/core/Select';
 
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 
 class PublishProduct extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
-      pictures: [],
       publication: {
         woman: {
           id: 1,
@@ -50,15 +47,21 @@ class PublishProduct extends Component {
           alt: "boy"
         }
       },
+      pictures: [],
       selectPublication: null,
       expanded: false,
       user: null,
-      selectedPro:[], 
+      selectedPro:[],
       typeProduct: null,
       EstadoPruducto: null,
       Talla: null,
-      Marca: null, 
-      showComponent:""
+      Marca: null,
+      showComponent:"Seleccionar",
+      selectedSize:"Seleccionar",
+      selectedBrand:"Seleccionar",
+      selectedState:"Seleccionar",
+
+
     };
     this.onDrop = this.onDrop.bind(this);
     this.handleItemList = this.handleItemList.bind(this);
@@ -66,12 +69,11 @@ class PublishProduct extends Component {
   }
 
   //TODO CREATE FUNTION TOAST
-  componentWillMount() {
-
+  componentWillMount()
+  {
     firebase.auth().onAuthStateChanged(user => {
       this.setState({ user: user })
     })
-
     firebase.database().ref('TipoProducto')
       .once('value', snapshot => {
       this.setState({ typeProduct: snapshot.val() })
@@ -84,16 +86,23 @@ class PublishProduct extends Component {
       .once('value', snapshot => {
       this.setState({ Talla: snapshot.val() })
     })
-    firebase.database().ref('EstadoPruducto')
+    firebase.database().ref('EstadoProducto')
       .once('value', snapshot => {
+        console.log("stas, " , snapshot.val())
       this.setState({ EstadoPruducto: snapshot.val() })
     })
   }
 
   onDrop(pictureFiles, pictureDataURLs) {
-    this.setState({
-      pictures: this.state.pictures.concat(pictureFiles)
-    });
+    if (pictureFiles.length > 3){
+      //TODO TOAST
+      console.log("ONLY TREH POTHOS") 
+    }else{
+      this.setState({
+        pictures: pictureFiles
+      });
+    }
+
   }
 
   handleClick = panel => (event, isExpanded) => {
@@ -121,14 +130,13 @@ class PublishProduct extends Component {
       },
       expanded: {},
     })(MuiExpansionPanel);
-    
+
     const ExpansionPanelSummary = withStyles({
       root: {
-        backgroundColor: 'rgba(0, 0, 0, 0)',
         marginBottom: -1,
-        minHeight: 49,
+        minHeight: 44,
         '&$expanded': {
-          minHeight: 49,
+          minHeight: 44,
         },
       },
       content: {
@@ -138,7 +146,7 @@ class PublishProduct extends Component {
       },
       expanded: {},
     })(MuiExpansionPanelSummary);
-    
+
     const ExpansionPanelDetails = withStyles(theme => ({
       root: {
         padding: '0px 18px 0px 18px',
@@ -159,7 +167,7 @@ class PublishProduct extends Component {
           direction="row-reverse"
           justify="space-between"
         >
-          <div>
+          <div style={{width:"59%"}} >
             {
               typePro ?
                 typePro.map(type => {
@@ -178,13 +186,14 @@ class PublishProduct extends Component {
                             typeObj[type].map(listData => {
 
                               return (
-                                <ListItem 
+                                <ListItem
                                   className="MuiListItem-rootProd"
-                                  button 
+                                  button
                                   key={listData}
-                                  onClick={()=> 
-                                  {  
+                                  onClick={()=>
+                                  {
                                     this.setState({selectedPro: {
+                                      "publication": data.name,
                                       "type": type,
                                       "category":listData
                                     }, showComponent: "publicItem"})
@@ -199,7 +208,7 @@ class PublishProduct extends Component {
                         </List>
                       </ExpansionPanelDetails>
                     </ExpansionPanel>
-                   
+
                   )
                 })
                 :
@@ -219,10 +228,10 @@ class PublishProduct extends Component {
                     <img className="imgSelect" src={process.env.PUBLIC_URL + data.src} alt={data.alt} />
                   </ListItemAvatar>
                   <ListItemText primary={data.name} />
-                  <Button 
+                  <Button
                     className="smallButton"
-                    size="small" 
-                    variant="outlined" 
+                    size="small"
+                    variant="outlined"
                     color="secondary"
                     onClick={()=>{
                       this.setState({showComponent: "FolderList" , selectedPro : [] })
@@ -249,8 +258,8 @@ class PublishProduct extends Component {
         <h2 className="title">
           VENDE TUS PRODUCTOS
         </h2>
-        <label className="subTitle">Cómo quieres publicar?</label>
-        <List className="listType">
+        <p className="subTitle">Cómo quieres publicar?</p>
+        <List className="listType" >
           {
             keysTypePublic.map(human => {
               {
@@ -275,53 +284,39 @@ class PublishProduct extends Component {
               }
             })
           }
-
-          {/* <ListItem>
-            <Grid
-                container
-                direction="column"
-                justify="center"
-                alignItems="center"
-              >
-              <ListItemAvatar>
-                <img onClick={this.handleItemList} className ="imgSelect" src={process.env.PUBLIC_URL + 'manImg.jpg'} alt="woman" />
-                </ListItemAvatar>
-              <ListItemText primary="Hombre" />
-              </Grid>
-            </ListItem>
-            <ListItem>
-            <Grid
-                container
-                direction="column"
-                justify="center"
-                alignItems="center"
-              >
-                <ListItemAvatar>
-                  <img onClick={this.handleItemList} className ="imgSelect" src={process.env.PUBLIC_URL + 'boyImg.jpg'} alt="woman" />
-                  </ListItemAvatar>
-                <ListItemText primary="Niño"/>
-              </Grid>
-            </ListItem> */}
         </List>
       </div>
     );
   }
+  handlePublication()
+  {
 
+  }
   publicItem(){
+    const talla = this.state.Talla;
+    const marca = this.state.Marca;
+    const estadoProducto = this.state.EstadoPruducto;
+    const category =  this.state.selectedPro
+
     return(
       <div>
         <h2 className="title">
           VENDE TUS PRODUCTOS
         </h2>
-    
+
           <div className="itemPublish">
             <h5>CATEGORÍA<span>*</span></h5>
           </div>
-          <div>  
-            <p className="lineCategory">Muerj>djslfja>KLDLSJADs</p>
-            <p className="changeCategory">Cambiar</p>
+          <div>
+            <p className="lineCategory">
+              {
+              `${category.publication}>${category.type}>${category.category} `
+              }
+            </p>
+            <p className="changeCategory" onClick={()=>{
+              this.setState({showComponent:"FolderList", selectedPro: null})
+            }}>Cambiar</p>
           </div>
-
           <div className="itemPublish">
             <h5 >TALLA<span>*</span></h5>
           </div>
@@ -330,19 +325,32 @@ class PublishProduct extends Component {
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                // value={age}
-                // onChange={handleChange}
-                displayEmpty 
+                // value={this.state.selectedSize}
+                onChange={(e)=>{
+                  this.setState({selectedSize: e.target.value})
+                }}
+                displayEmpty
+
               >
-                <InputLabel id="label">Seleccionar</InputLabel>
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
+                <InputLabel id="TALLA">Seleccionar</InputLabel>
+                {
+                  talla ? talla.map(items =>{
+                    return(
+                      <MenuItem
+                       key={items}
+                       value={items}
+                      >
+                        {items}
+                      </MenuItem>
+                    )
+                  }):
+                  <MenuItem value="">Empty</MenuItem>
+                }
               </Select>
             </FormControl>
           </div>
           <div className="itemPublish">
-            <h5 >MARCA<span>*</span></h5>
+            <h5>MARCA<span>*</span></h5>
           </div>
           <div>
             <FormControl >
@@ -350,13 +358,20 @@ class PublishProduct extends Component {
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 // value={age}
-                // onChange={handleChange}
-                displayEmpty 
+                onChange={(e)=>{
+                  this.setState({selectedBrand: e.target.value})
+                }}
+                displayEmpty
               >
-                <InputLabel id="label">Seleccionar</InputLabel>
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
+                <InputLabel id="Marca">Seleccionar</InputLabel>
+                {
+                  marca ? marca.map(items =>{
+                    return(
+                      <MenuItem key={items} value={items}>{items}</MenuItem>
+                    )
+                  }):
+                  <MenuItem value="">Empty</MenuItem>
+                }
               </Select>
             </FormControl>
           </div>
@@ -369,13 +384,20 @@ class PublishProduct extends Component {
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 // value={age}
-                // onChange={handleChange}
-                displayEmpty 
+                onChange={(e)=>{
+                  this.setState({selectedState: e.target.value})
+                }}
+                displayEmpty
               >
-                <InputLabel id="label">Seleccionar</InputLabel>
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
+                <InputLabel id="Estado">Seleccionar</InputLabel>
+                {
+                  estadoProducto ? estadoProducto.map(items =>{
+                    return(
+                      <MenuItem key={items} value={items}>{items}</MenuItem>
+                    )
+                  }):
+                  <MenuItem value="">Empty</MenuItem>
+                }
               </Select>
             </FormControl>
           </div>
@@ -383,39 +405,31 @@ class PublishProduct extends Component {
             <h5 >SUBE FOTOS<span>*</span> </h5>
           </div>
           <div>
-            <FormControl >
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                // value={age}
-                // onChange={handleChange}
-                displayEmpty 
-              >
-                <InputLabel id="label">Seleccionar</InputLabel>
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
-              </Select>
-            </FormControl>
+            <p className="changeCategory">Mira nuestros tips para subir buenas fotos</p>
           </div>
           <div className="itemPublish">
             <h5 >IMAGENES DESTACADAS</h5>
           </div>
+          <div style={{ marginRight: "15px" }}>
+            <ImageUploader
+              withIcon={false}
+              withPreview={true}
+              label=""
+              buttonText="Cargar Images"
+              onChange={this.onDrop}
+              imgExtension={[".jpg", ".gif", ".png", ".gif", ".svg"]}
+              maxFileSize={1048576}
+              fileSizeError=" file size is too big"
+              singleImage={true}
+            />
+          </div>
           <div>
-            <FormControl >
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                // value={age}
-                // onChange={handleChange}
-                displayEmpty 
-              >
-                <InputLabel id="label">Seleccionar</InputLabel>
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
-              </Select>
-            </FormControl>
+            <Button
+             className="publicButton"
+             onClick={this.handlePublication}
+            >
+              Publicar
+            </Button>
           </div>
       </div>
     )
@@ -436,25 +450,12 @@ class PublishProduct extends Component {
   }
 
   render() {
-    console.log("Mi Stte", this.state.selectedPro)
+    console.log(" Estado pictures", this.state.pictures)
+
     return (
       <div>
-      {/* {this.renderSwitch()} */}
-      {this.publicItem()}
-        {/* <div className="hidden">
-          <div style={{ marginRight: "15px" }}>
-            <ImageUploader
-              withIcon={false}
-              withPreview={true}
-              label=""
-              buttonText="Upload Images"
-              onChange={this.onDrop}
-              imgExtension={[".jpg", ".gif", ".png", ".gif", ".svg"]}
-              maxFileSize={1048576}
-              fileSizeError=" file size is too big"
-            />
-          </div>
-        </div> */}
+        {/* {this.renderSwitch()} */}
+        {  this.publicItem()}
       </div>
     )
   }
