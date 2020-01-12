@@ -22,6 +22,13 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 
+
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+
 class PublishProduct extends Component {
 
   constructor(props) {
@@ -60,6 +67,7 @@ class PublishProduct extends Component {
       selectedSize:"Seleccionar",
       selectedBrand:"Seleccionar",
       selectedState:"Seleccionar",
+      sendRequest: false,
     };
     this.onDrop = this.onDrop.bind(this);
     this.handleItemList = this.handleItemList.bind(this);
@@ -102,6 +110,45 @@ class PublishProduct extends Component {
       });
     }
 
+  }
+
+  SuccesDialog() {
+    const [open, setOpen] = React.useState(false);
+  
+    const handleClickOpen = () => {
+      setOpen(true);
+    };
+  
+    const handleClose = () => {
+      setOpen(false);
+    };
+  
+    return (
+      <div>
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Let Google help apps determine location. This means sending anonymous location data to
+              Google, even when no apps are running.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} color="primary">
+              Disagree
+            </Button>
+            <Button onClick={handleClose} color="primary" autoFocus>
+              Agree
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+    );
   }
 
   handleClick = panel => (event, isExpanded) => {
@@ -307,9 +354,7 @@ class PublishProduct extends Component {
       //   displayName: this.state.user.displayName,
       //   image: task.snapshot.downloadURL
       // }
-      // const dbRef = firebase.database().ref('pictures');
-      // const newPicture = dbRef.push();
-      // newPicture.set(record);
+      
     });
   }
   putStorageItem(file) {
@@ -339,10 +384,19 @@ class PublishProduct extends Component {
           Talla: this.state.selectedSize,
           Marca: this.state.selectedBrand,
           EstadoProducto: this.state.selectedState,
-          UID: this.props.user.UID,
+          UID: this.props.user.uid,
           Pictures:url
         }
         console.log("RECORD", record)
+        const dbRef = firebase.database().ref('Publicacion');
+        const newRow = dbRef.push();
+        newRow.set(record)
+        .then(data =>{
+          this.setState({setState: true})
+          console.log("success",data)
+        }).catch(error => {
+          console.log("error", error)
+        })
       }
     })
     .catch((error) => {
@@ -489,6 +543,30 @@ class PublishProduct extends Component {
               Publicar
             </Button>
           </div>
+          <div>
+           <Dialog
+            open={this.state.sendRequest}
+            // onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Let Google help apps determine location. This means sending anonymous location data to
+                Google, even when no apps are running.
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={()=>{}} color="primary">
+                Disagree
+              </Button>
+              <Button onClick={()=>{}} color="primary" autoFocus>
+                Agree
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </div>
       </div>
     )
   }
