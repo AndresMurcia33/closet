@@ -68,7 +68,7 @@ class App extends Component{
               {/* <img src={this.state.user.photoURL} alt={this.state.user.displayName} /> */}
               {/* <p>hola</p>{this.state.user.displayName}
               <button onClick={this.handleLogout}>Salir</button> */}
-              <PublishProduct/>
+              <PublishProduct user={this.state.user}/>
           </div>
         );
       }else{

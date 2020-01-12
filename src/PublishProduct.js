@@ -60,12 +60,11 @@ class PublishProduct extends Component {
       selectedSize:"Seleccionar",
       selectedBrand:"Seleccionar",
       selectedState:"Seleccionar",
-
-
     };
     this.onDrop = this.onDrop.bind(this);
     this.handleItemList = this.handleItemList.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.handlePublication = this.handlePublication.bind(this);
   }
 
   //TODO CREATE FUNTION TOAST
@@ -288,9 +287,68 @@ class PublishProduct extends Component {
       </div>
     );
   }
+
+  handleUpload (img) {
+    const file = img
+    const name = new Date().valueOf();
+    const storageRef = firebase.storage().ref(`Fotos/${name}`);
+    const task = storageRef.put(file);
+    task.on('state_changed', null,
+    error => {
+      console.error(error.message);
+    }, () => {
+       console.log("task.snapshot.downloadURL" , task.snapshot.ref.getDownloadURL())
+      // task.snapshot.ref.getDownloadURL()
+        task.snapshot.ref.getDownloadURL().then(function(url) {
+          
+        });
+      // const record = {
+      //   photoURL: this.state.user.photoURL,
+      //   displayName: this.state.user.displayName,
+      //   image: task.snapshot.downloadURL
+      // }
+      // const dbRef = firebase.database().ref('pictures');
+      // const newPicture = dbRef.push();
+      // newPicture.set(record);
+    });
+  }
+  putStorageItem(file) {
+    // the return value will be a Promise
+    const name = new Date().valueOf();
+    return  firebase.storage().ref(`Fotos/${name}`).put(file)
+    .then((snapshot) => {
+      return snapshot.ref.getDownloadURL()
+    }).catch((error) => {
+      console.log('One failed:', file, error.message)
+    });
+  }
   handlePublication()
   {
 
+    const pictures = this.state.pictures;
+    Promise.all(
+      // Array of "Promises"
+      pictures.map(item => this.putStorageItem(item))
+    )
+    .then((url) => {
+      console.log(`All success`, this.props.user.uid)
+      if(pictures.length == url.length){
+        const category =  this.state.selectedPro;
+        const record = {
+          TipoProducto:[{name: category.publication, type: category.type, category: category.category}],
+          Talla: this.state.selectedSize,
+          Marca: this.state.selectedBrand,
+          EstadoProducto: this.state.selectedState,
+          UID: this.props.user.UID,
+          Pictures:url
+        }
+        console.log("RECORD", record)
+      }
+    })
+    .catch((error) => {
+      console.log(`Some failed: `, error.message)
+    });
+    
   }
   publicItem(){
     const talla = this.state.Talla;
@@ -454,8 +512,8 @@ class PublishProduct extends Component {
 
     return (
       <div>
-        {/* {this.renderSwitch()} */}
-        {  this.publicItem()}
+        {this.renderSwitch()}
+        {/* {  this.publicItem()} */}
       </div>
     )
   }
