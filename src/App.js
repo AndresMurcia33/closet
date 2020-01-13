@@ -74,8 +74,8 @@ class App extends Component{
       }else{
         return(
           <div>
-            <button onClick={this.handleAuth}>
-              Login con Google
+            <button className="buttonLogin" onClick={this.handleAuth}>
+     
             </button>
           </div>
         );
@@ -124,7 +124,7 @@ class App extends Component{
                   <SearchIcon />
                 </IconButton>
               </Grid>
-            {this.state.auth && (
+            {this.state.user && (
             <div>
               <IconButton
                 aria-label="account of current user"
@@ -154,8 +154,8 @@ class App extends Component{
                 open={open}
                 onClose={this.handleClose}
               >
-                <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-                <MenuItem onClick={this.handleClose}>My account</MenuItem>
+                <MenuItem onClick={this.handleLogout}>Salir</MenuItem>
+                <MenuItem onClick={this.handleClose}>Mi cuenta</MenuItem>
               </Menu>
             </div>
              )}

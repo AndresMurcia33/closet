@@ -145,7 +145,57 @@ body{
   margin-left: 10px !important;
   margin-bottom: 40px !important; 
 }
+.modalTitle{
+  font-size: 20px !important;
+  color: #000000  !important;
+  opacity: 1  !important;
+}
+.modalBody{
+  margin-bottom: 12px  !important;
+  color: #0000008A !important;
+}
+.sentButton{
+  color: #E12852 !important;
+  opacity: 1  !important;
+  font-weight: bold  !important;
+}
+.cancelButton{
+  color: #E12852 !important;
+}
 
+.imgSaccess{
+  width: 71%;
+  margin: auto;
+  padding: 0px 30px;
+}
+
+
+.listProduct{
+  margin: 5px;
+}
+.carousel *{
+  height: 150px;
+}
+.infoProduct{
+  font-size: 14px;
+}
+.infoProduct p{
+  margin: 0;
+}
+.infoProduct label{
+  font-weight: 500;
+}
+
+.buttonLogin{
+  width: 67%;
+  height: 214px;
+  border-radius: 169px;
+  border: 0px;
+  background-image: url("login.png");
+  background-repeat: no-repeat;
+  background-size: 100%;
+  margin: 16%;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

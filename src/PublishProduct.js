@@ -28,6 +28,8 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { Carousel } from 'react-responsive-carousel';
 
 class PublishProduct extends Component {
 
@@ -68,6 +70,8 @@ class PublishProduct extends Component {
       selectedBrand:"Seleccionar",
       selectedState:"Seleccionar",
       sendRequest: false,
+      sendRequestError: false,
+      EstadoPublicacion: null,
     };
     this.onDrop = this.onDrop.bind(this);
     this.handleItemList = this.handleItemList.bind(this);
@@ -95,9 +99,12 @@ class PublishProduct extends Component {
     })
     firebase.database().ref('EstadoProducto')
       .once('value', snapshot => {
-        console.log("stas, " , snapshot.val())
       this.setState({ EstadoPruducto: snapshot.val() })
     })
+    firebase.database().ref('Publicacion')
+      .once('value', snapshot => {
+    this.setState({ EstadoPublicacion: snapshot.val() })
+  })
   }
 
   onDrop(pictureFiles, pictureDataURLs) {
@@ -112,44 +119,6 @@ class PublishProduct extends Component {
 
   }
 
-  SuccesDialog() {
-    const [open, setOpen] = React.useState(false);
-  
-    const handleClickOpen = () => {
-      setOpen(true);
-    };
-  
-    const handleClose = () => {
-      setOpen(false);
-    };
-  
-    return (
-      <div>
-        <Dialog
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              Let Google help apps determine location. This means sending anonymous location data to
-              Google, even when no apps are running.
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose} color="primary">
-              Disagree
-            </Button>
-            <Button onClick={handleClose} color="primary" autoFocus>
-              Agree
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </div>
-    );
-  }
 
   handleClick = panel => (event, isExpanded) => {
     let newState = this.state.openList;
@@ -357,6 +326,7 @@ class PublishProduct extends Component {
       
     });
   }
+
   putStorageItem(file) {
     // the return value will be a Promise
     const name = new Date().valueOf();
@@ -367,9 +337,9 @@ class PublishProduct extends Component {
       console.log('One failed:', file, error.message)
     });
   }
+
   handlePublication()
   {
-
     const pictures = this.state.pictures;
     Promise.all(
       // Array of "Promises"
@@ -377,7 +347,7 @@ class PublishProduct extends Component {
     )
     .then((url) => {
       console.log(`All success`, this.props.user.uid)
-      if(pictures.length == url.length){
+      if(pictures.length === url.length){
         const category =  this.state.selectedPro;
         const record = {
           TipoProducto:[{name: category.publication, type: category.type, category: category.category}],
@@ -387,14 +357,14 @@ class PublishProduct extends Component {
           UID: this.props.user.uid,
           Pictures:url
         }
-        console.log("RECORD", record)
         const dbRef = firebase.database().ref('Publicacion');
         const newRow = dbRef.push();
         newRow.set(record)
         .then(data =>{
-          this.setState({setState: true})
+          this.setState({sendRequest: true})
           console.log("success",data)
         }).catch(error => {
+          this.setState({sendRequestError:true})
           console.log("error", error)
         })
       }
@@ -542,31 +512,7 @@ class PublishProduct extends Component {
             >
               Publicar
             </Button>
-          </div>
-          <div>
-           <Dialog
-            open={this.state.sendRequest}
-            // onClose={handleClose}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-          >
-            <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description">
-                Let Google help apps determine location. This means sending anonymous location data to
-                Google, even when no apps are running.
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={()=>{}} color="primary">
-                Disagree
-              </Button>
-              <Button onClick={()=>{}} color="primary" autoFocus>
-                Agree
-              </Button>
-            </DialogActions>
-          </Dialog>
-        </div>
+          </div> 
       </div>
     )
   }
@@ -580,9 +526,60 @@ class PublishProduct extends Component {
         return this.publicItem();
       case 'FolderList':
         return this.FolderList();
+      case 'listAll':
+        return this.listAll();
       default:
         return this.FolderList();
     }
+  }
+
+  listAll(){
+    const listPro = this.state.EstadoPublicacion;
+    const listKey = listPro ? Object.keys(listPro) : ""
+
+      return (
+        listPro ? listKey.map(data =>{
+        return( 
+          <div className="listProduct">
+            <Grid
+                container
+                direction="row"
+                justify="space-between"
+                alignItems="center"
+              >
+              <Carousel
+                showIndicators={false}
+                autoPlay={true}
+                interval={2000}
+                showThumbs={false}
+                width={150}
+              >
+                {
+                  listPro[data].Pictures.map(img =>{
+                    return(
+                      <div>
+                          <img src={img} />
+                      </div>  
+                    )
+                  })
+                }
+              </Carousel>   
+              <div className="infoProduct">
+                <label>Producto:</label>
+                <p>{listPro[data].EstadoProducto}</p>
+                <label>Marca:</label>
+                <p>{listPro[data].Marca}</p>
+                <label>Talla:</label>
+                <p>{listPro[data].Talla}</p>
+                <Button className="sentButton" onClick={()=>{}} color="primary" >
+                  COMPRAR
+                </Button>
+              </div>
+            </Grid>
+          </div>
+        )
+       }):<p>Empty List</p>
+      )
   }
 
   render() {
@@ -592,6 +589,57 @@ class PublishProduct extends Component {
       <div>
         {this.renderSwitch()}
         {/* {  this.publicItem()} */}
+      
+        <div >
+        <Dialog
+          open={this.state.sendRequest}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title" className="modalTitle">{"Publicación Exitosa"}</DialogTitle>
+          <DialogContent>
+          <img className="imgSaccess" src={process.env.PUBLIC_URL + "success.png"} alt="success" />
+            <DialogContentText className="modalBody" id="alert-dialog-description">
+            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button className="cancelButton" onClick={()=>{
+              this.setState({showComponent:"FolderList", selectedPro: null, sendRequest: false})
+            }} color="primary">
+              CANCELAR
+            </Button>
+            <Button className="sentButton" onClick={()=>{
+              this.setState({showComponent:"listAll", selectedPro: null, sendRequest: false})
+            }} color="primary" autoFocus>
+              ENVIAR
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+      <div>
+        <Dialog
+          open={this.state.sendRequestError}
+          onClose={this.state.sendRequestError}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title" className="modalTitle">No es posible publicar</DialogTitle>
+          <DialogContent>
+          <img className="imgSaccess" src={process.env.PUBLIC_URL + "success.png"} alt="success" />
+            <DialogContentText className="modalBody" id="alert-dialog-description">
+            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button className="sentButton" onClick={()=>{
+              this.setState({showComponent:"FolderList", selectedPro: null, sendRequestError: false})
+            }} color="primary" autoFocus>
+              ENTENDIDO
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
       </div>
     )
   }
